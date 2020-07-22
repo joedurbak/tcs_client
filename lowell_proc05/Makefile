@@ -11,13 +11,11 @@ CLSS = SimpleProducer SimpleAsyncConsumer
 PROG = $(PROD) $(CONS)
 
 #activemq-cpp library
-MQCPP_DIR = $(HOME)/work/software/activemq-cpp-library-3.9.5
-MQCPP_INC = -I$(MQCPP_DIR)/include/activemq-cpp-3.9.5
-MQCPP_LIB = -L$(MQCPP_DIR)/lib -lactivemq-cpp
+MQCPP_INC = -I/usr/local/include/activemq-cpp-3.10.0
+MQCPP_LIB = -L/usr/local/lib -lactivemq-cpp
 
-APR_DIR   = $(HOME)/work/software/apr-1.7.0
-APR_INC   =  -I$(APR_DIR)/include/apr-1
-APR_LIB   =  -L$(APR_DIR)/lib -R$(APR_DIR)/lib -lapr-1
+APR_INC   =  -I/usr/include/apr-1.0
+APR_LIB   =  -L/usr/lib/x86_64-linux-gnu -R/usr/lib/x86_64-linux-gnu -lapr-1
 
 CXXDBG = -ggdb
 CXXOPT = -Wall -O1 -fPIC $(CXXDBG)
