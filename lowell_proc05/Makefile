@@ -14,8 +14,9 @@ PROG = $(PROD) $(CONS)
 MQCPP_INC = -I/usr/local/include/activemq-cpp-3.10.0
 MQCPP_LIB = -L/usr/local/lib -lactivemq-cpp
 
+GNU_LIB   =  /usr/lib/x86_64-linux-gnu
 APR_INC   =  -I/usr/include/apr-1.0
-APR_LIB   =  -L/usr/lib/x86_64-linux-gnu -R/usr/lib/x86_64-linux-gnu -lapr-1
+APR_LIB   =  -L$(GNU_LIB) -Wl,-rpath=$(GNU_LIB) -lapr-1
 
 CXXDBG = -ggdb
 CXXOPT = -Wall -O1 -fPIC $(CXXDBG)

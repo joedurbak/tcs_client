@@ -16,6 +16,7 @@ RUN apt-get update -y \
     automake \
     libtool \
     git \
+    libncurses5-dev
 
 RUN git clone https://gitbox.apache.org/repos/asf/activemq-cpp.git \
     && cd activemq-cpp/activemq-cpp \
@@ -26,7 +27,9 @@ RUN git clone https://gitbox.apache.org/repos/asf/activemq-cpp.git \
 
 RUN git clone https://github.com/joedurbak/tcs_client.git \
     && cd tcs_client/lowell_proc05 \
-#    && make \
+    && mkdir obj \
+    && mkdir bin \
+    && make
 #    && make install
 
 RUN alias ls='ls --color=auto'
