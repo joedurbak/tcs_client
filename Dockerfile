@@ -29,7 +29,5 @@ RUN git clone https://github.com/joedurbak/tcs_client.git \
     && cd tcs_client/lowell_proc05 \
     && mkdir obj \
     && mkdir bin \
-    && make
-#    && make install
-
-RUN alias ls='ls --color=auto'
+    && make \
+    && /sbin/ldconfig
