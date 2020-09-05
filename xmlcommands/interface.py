@@ -51,4 +51,4 @@ def execute_command(tcp_command="T 23:59:59.9 +89:59:59.9 0.0 0.0 000.0 NONAME")
     command = split_command[0]
     arguments = split_command[1:]
     tcs_command = COMMANDS[command](*arguments)
-    return tcs_command.execute_tcs_command()
+    return tcs_command.execute_command()

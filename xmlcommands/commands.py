@@ -1,22 +1,55 @@
-from jinja2 import Template
+import os
+import inspect
+import sys
+
+from jinja2 import Template, Environment, PackageLoader, select_autoescape
 
 
-class BaseCommand:
+class BaseCommand(object):
     def __init__(self, *args, **kwargs):
-        self.tcs_template = ''
-        self.tcs_render_dict = {}
-        self.tcp_template = 'not implemented yet'
-        self.tcp_render_dict = {}
+        self.__name__ = inspect.currentframe().f_code.co_name
+        self.command_env = Environment(
+            loader=PackageLoader('xmlcommands', os.path.join('templates', 'commands')),
+            autoescape=select_autoescape(['html', 'xml'])
+        )
+        self.response_env = Environment(
+            loader=PackageLoader('xmlcommands', os.path.join('templates', 'responses')),
+            autoescape=select_autoescape(['html', 'xml'])
+        )
+        self.command_template = self.command_env.get_template(self.__name__ + ".xml")
+        self.command_render_dict = {}
+        self.response_template = self.response_env.get_template(self.__name__ + ".txt")
+        self.response_render_dict = {}
+        self.proc_dir = os.path.join(os.path.basename(__file__), '..', 'lowell_proc05')
+        self.bin_dir = os.path.join(self.proc_dir, 'bin')
+        self.command_producer = 'producer'
+        self.command_consumer = 'consumer'
+        self.command_producer_full_path = os.path.join(self.bin_dir, self.command_producer)
+        self.command_consumer_full_path = os.path.join(self.bin_dir, self.command_consumer)
+        self.command_producer_message_file = os.path.join(self.proc_dir, 'message.dat')
 
-    def tcp_answer(self):
-        return Template(self.tcp_template).render(**self.tcp_render_dict)
+    def response(self):
+        return self.response_template.render(**self.response_render_dict)
 
-    def execute_tcs_command(self):
-        return self.tcp_answer()
+    def execute_command(self):
+        self.save_command_xml()
+        os.system(self.command_producer)
+        return self.response()
+
+    def save_command_xml(self):
+        command_xml = self.command_template.render(**self.command_render_dict)
+        with open(self.generate_save_name(), 'w') as f:
+            f.write(command_xml)
+        with open(self.command_producer_message_file, 'w') as f:
+            f.write(command_xml)
+
+    def generate_save_name(self):
+        return self.__name__
 
 
 class GetCurrentStatus(BaseCommand):
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class SendDomeStopCommand(BaseCommand):
