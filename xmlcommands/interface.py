@@ -43,12 +43,19 @@ COMMANDS = {
     'j': commands.MoveFocusToSpecifiedPosition,
     'k': commands.ChangeFocusPositionAValue,
     'ks': commands.ChangeFocusPositionBValue,
+    'tcp_error': commands.TCPError,
 }
 
 
 def execute_command(tcp_command="T 23:59:59.9 +89:59:59.9 0.0 0.0 000.0 NONAME"):
     split_command = tcp_command.split()
     command = split_command[0]
-    arguments = split_command[1:]
-    tcs_command = COMMANDS[command](*arguments)
+    try:
+        arguments = split_command[1:]
+    except IndexError:
+        arguments = None
+    try:
+        tcs_command = COMMANDS[command](arguments, tcp_command)
+    except KeyError:
+        tcs_command = COMMANDS['tcp_error'](arguments, tcp_command)
     return tcs_command.execute_command()

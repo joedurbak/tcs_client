@@ -2,11 +2,11 @@ import os
 import inspect
 import sys
 
-from jinja2 import Template, Environment, PackageLoader, select_autoescape
+from jinja2 import Environment, PackageLoader, select_autoescape
 
 
 class BaseCommand(object):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, arguments, received_message, *args, **kwargs):
         self.__name__ = inspect.currentframe().f_code.co_name
         self.command_env = Environment(
             loader=PackageLoader('xmlcommands', os.path.join('templates', 'commands')),
@@ -27,6 +27,8 @@ class BaseCommand(object):
         self.command_producer_full_path = os.path.join(self.bin_dir, self.command_producer)
         self.command_consumer_full_path = os.path.join(self.bin_dir, self.command_consumer)
         self.command_producer_message_file = os.path.join(self.proc_dir, 'message.dat')
+        self.arguments = arguments
+        self.received_message = received_message
 
     def response(self):
         return self.response_template.render(**self.response_render_dict)
@@ -45,6 +47,11 @@ class BaseCommand(object):
 
     def generate_save_name(self):
         return self.__name__
+
+
+class TCPError(BaseCommand):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class GetCurrentStatus(BaseCommand):
