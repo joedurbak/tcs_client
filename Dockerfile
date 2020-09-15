@@ -31,3 +31,6 @@ RUN git clone https://github.com/joedurbak/tcs_client.git \
     && mkdir bin \
     && make \
     && /sbin/ldconfig
+
+RUN conda update -y \
+    && conda install -y xmltodict jinja2 pandas astropy

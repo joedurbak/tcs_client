@@ -1,6 +1,5 @@
 import os
 import inspect
-import sys
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
@@ -33,7 +32,11 @@ class BaseCommand(object):
     def response(self):
         return self.response_template.render(**self.response_render_dict)
 
+    def parse_arguments(self):
+        pass
+
     def execute_command(self):
+        self.parse_arguments()
         self.save_command_xml()
         os.system(self.command_producer)
         return self.response()
@@ -57,6 +60,11 @@ class TCPError(BaseCommand):
 class GetCurrentStatus(BaseCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.request_number_dict = {}
+
+    def parse_arguments(self):
+
+        pass
 
 
 class SendDomeStopCommand(BaseCommand):
