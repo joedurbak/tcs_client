@@ -58,4 +58,8 @@ def execute_command(tcp_command="T 23:59:59.9 +89:59:59.9 0.0 0.0 000.0 NONAME")
         tcs_command = COMMANDS[command](arguments, tcp_command)
     except KeyError:
         tcs_command = COMMANDS['tcp_error'](arguments, tcp_command)
-    return tcs_command.execute_command()
+    try:
+        return tcs_command.execute_command()
+    except Exception as e:
+        'Received message {}, but generated error: {}'.format(tcs_command, e)
+        return e

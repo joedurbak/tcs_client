@@ -3,6 +3,8 @@ import inspect
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
+from .status import Status
+
 
 class BaseCommand(object):
     def __init__(self, arguments, received_message, *args, **kwargs):
@@ -26,6 +28,7 @@ class BaseCommand(object):
         self.command_producer_full_path = os.path.join(self.bin_dir, self.command_producer)
         self.command_consumer_full_path = os.path.join(self.bin_dir, self.command_consumer)
         self.command_producer_message_file = os.path.join(self.proc_dir, 'message.dat')
+        self.command_consumer_message_file = os.path.join(self.proc_dir, 'test.xml')
         self.arguments = arguments
         self.received_message = received_message
 
@@ -58,13 +61,26 @@ class TCPError(BaseCommand):
 
 
 class GetCurrentStatus(BaseCommand):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, timeout_s=10, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.request_number_dict = {}
 
     def parse_arguments(self):
+        self.arguments = [int(argument) for argument in self.arguments]
 
-        pass
+    def command_status(self):
+        os.system(self.command_consumer_full_path)
+
+    def wait_for_message(self, status_creation_time):
+        wait = True
+        while wait:
+            if os.path.getctime(self.command_consumer_message_file) > status_creation_time:
+                wait = False
+
+    def load_status(self):
+        status_creation_time = os.path.getctime(self.command_consumer_message_file)
+        self.command_status()
+
 
 
 class SendDomeStopCommand(BaseCommand):
